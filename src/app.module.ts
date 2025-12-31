@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from 'dotenv';
+import { ConfigModule } from '@nestjs/config';
 config();
 
 @Module({
@@ -17,6 +18,7 @@ config();
       entities: [],
       synchronize: true,
     }),
+    ConfigModule.forRoot({ isGlobal: true }),
   ],
   controllers: [AppController],
   providers: [AppService],
