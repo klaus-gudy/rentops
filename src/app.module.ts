@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from 'dotenv';
 import { ConfigModule } from '@nestjs/config';
+import { OrganizationModule } from './organization/organization.module';
 config();
 
 @Module({
@@ -19,6 +20,7 @@ config();
       synchronize: true,
     }),
     ConfigModule.forRoot({ isGlobal: true }),
+    OrganizationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
