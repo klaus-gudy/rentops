@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: rentops_db_container
+    restart: always
+    environment:
+      POSTGRES_USER: rentops_user
+      POSTGRES_PASSWORD: rentops_password
+      POSTGRES_DB: rentops_database
+    ports:
+      - "5432:5432" # Maps your computer's port 5434 to the container's 5434
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
