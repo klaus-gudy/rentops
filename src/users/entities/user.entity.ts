@@ -1,18 +1,27 @@
+import { OrganizationMember } from "src/organization/entities/organization-member.entity";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { OrganizationMember } from "./organization-member.entity";
 
-@Entity('organizations')
-export class Organization {
+@Entity('users')
+export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
+    @Column({ unique: true })
+    email: string;
+
     @Column()
-    name: string;
+    passwordHash: string;
+
+    @Column()
+    firstName: string;
+
+    @Column()
+    lastName: string;
 
     @Column({ default: true })
     isActive: boolean;
 
-    @OneToMany(() => OrganizationMember, (member) => member.organization)
+    @OneToMany(() => OrganizationMember, (member) => member.user)
     organizationMembers: OrganizationMember[];
 
     @CreateDateColumn()
