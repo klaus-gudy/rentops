@@ -6,6 +6,7 @@ import { config } from 'dotenv';
 import { ConfigModule } from '@nestjs/config';
 import { OrganizationModule } from './organization/organization.module';
 import { UsersModule } from './users/users.module';
+import { PropertiesModule } from './properties/properties.module';
 config();
 
 @Module({
@@ -23,6 +24,7 @@ config();
     ConfigModule.forRoot({ isGlobal: true }),
     OrganizationModule,
     UsersModule,
+    PropertiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
