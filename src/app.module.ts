@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from 'dotenv';
 import { ConfigModule } from '@nestjs/config';
 import { OrganizationModule } from './organization/organization.module';
+import { UsersModule } from './users/users.module';
 config();
 
 @Module({
@@ -21,6 +22,7 @@ config();
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     OrganizationModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
