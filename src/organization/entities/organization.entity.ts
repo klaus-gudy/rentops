@@ -9,6 +9,9 @@ export class Organization {
     @Column()
     name: string;
 
+    @Column({ unique: true })
+    slug: string;
+
     @Column({ default: true })
     isActive: boolean;
 
