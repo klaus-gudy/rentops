@@ -8,6 +8,7 @@ import { OrganizationModule } from './organization/organization.module';
 import { UsersModule } from './users/users.module';
 import { PropertiesModule } from './properties/properties.module';
 import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 config();
 
 @Module({
@@ -19,14 +20,18 @@ config();
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [],
-      synchronize: true,
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true, // Set to false in production
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     OrganizationModule,
     UsersModule,
     PropertiesModule,
     AuthModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET, // ← MUST NOT BE UNDEFINED
+      signOptions: { expiresIn: '1d' },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

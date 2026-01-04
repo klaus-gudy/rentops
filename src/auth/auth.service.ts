@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService, 
   ) {}
 
   async register(dto: RegisterDto) {
@@ -29,9 +31,12 @@ export class AuthService {
     const user = this.userRepo.create({
       email: dto.email,
       passwordHash,
+      firstName: dto.firstName,
+      lastName: dto.lastName
     });
 
     await this.userRepo.save(user);
+    console.log('JWT_SECRET:', process.env.JWT_SECRET);
 
     return this.signToken(user);
   }
@@ -60,6 +65,8 @@ export class AuthService {
       email: user.email,
     };
 
+    const secret = this.configService.get('JWT_SECRET');
+    console.log('Using JWT secret (length):', secret?.length);
     return {
       accessToken: this.jwtService.sign(payload),
     };
