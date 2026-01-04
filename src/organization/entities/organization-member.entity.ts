@@ -9,11 +9,14 @@ export class OrganizationMember {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({ nullable: true })
     userId: string;
 
     @Column()
     organizationId: string;
+
+    @Column({ nullable: true })
+    invitedEmail: string;
 
     @Column({ type: 'enum', enum: UserRole })
     role: UserRole;
@@ -24,7 +27,7 @@ export class OrganizationMember {
     @ManyToOne(() => Organization, (org) => org.organizationMembers)
     organization: Organization;
 
-    @ManyToOne(() => User, (user) => user.organizationMembers)
+    @ManyToOne(() => User, { nullable: true })
     user: User;
 
     @CreateDateColumn()

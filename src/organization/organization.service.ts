@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Organization } from './entities/organization.entity';
 import { Repository } from 'typeorm';
@@ -6,28 +6,29 @@ import { OrganizationMember } from './entities/organization-member.entity';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UserRole } from 'src/common/enums/user-role.enum';
 import { User } from 'src/users/entities/user.entity';
+import { InviteMemberDto } from './dto/invite-member.dto';
 
 @Injectable()
 export class OrganizationService {
-    constructor(
+  constructor(
     @InjectRepository(Organization)
     private readonly organizationRepo: Repository<Organization>,
 
     @InjectRepository(OrganizationMember)
     private readonly memberRepo: Repository<OrganizationMember>,
-  ) {}
+  ) { }
 
-    async createOrganizationForOwner( user: User, dto: CreateOrganizationDto): Promise<Organization> {
-      const slug = dto.name.toLowerCase().replace(/\s+/g, '-');
-      const existing = await this.organizationRepo.findOne({
-        where: { slug },
-      });
+  async createOrganizationForOwner(user: User, dto: CreateOrganizationDto): Promise<Organization> {
+    const slug = dto.name.toLowerCase().replace(/\s+/g, '-');
+    const existing = await this.organizationRepo.findOne({
+      where: { slug },
+    });
 
-      if (existing) {
-        throw new Error('Organization already exists');
-      }
+    if (existing) {
+      throw new Error('Organization already exists');
+    }
     const organization = this.organizationRepo.create({ name: dto.name, slug, isActive: true });
-    await  this.organizationRepo.save(organization);
+    await this.organizationRepo.save(organization);
 
     const ownerMember = this.memberRepo.create({
       organizationId: organization.id,
@@ -37,5 +38,55 @@ export class OrganizationService {
     });
     await this.memberRepo.save(ownerMember);
     return organization;
+  }
+
+  async inviteTenant(
+    orgId: string,
+    inviter: User,
+    dto: InviteMemberDto,
+  ) {
+    // Only TENANT allowed for now
+    if (dto.role !== UserRole.TENANT) {
+      throw new BadRequestException('Only tenants can be invited');
+    }
+
+    // Ensure inviter is OWNER
+    const inviterMembership = await this.memberRepo.findOne({
+      where: {
+        organizationId: orgId,
+        userId: inviter.id,
+        role: UserRole.LANDLORD_OWNER,
+        isActive: true,
+      },
+    });
+
+    if (!inviterMembership) {
+      throw new ForbiddenException('Only owners can invite tenants');
+    }
+
+    // Prevent duplicate invitations
+    const existingInvite = await this.memberRepo.findOne({
+      where: {
+        organizationId: orgId,
+        invitedEmail: dto.email,
+      },
+    });
+
+    if (existingInvite) {
+      throw new BadRequestException('User already invited');
+    }
+
+    const invitation = this.memberRepo.create({
+      organizationId: orgId,
+      invitedEmail: dto.email,
+      role: UserRole.TENANT,
+      isActive: false,
+    });
+
+    await this.memberRepo.save(invitation);
+
+    return {
+      message: 'Tenant invited successfully',
+    };
   }
 }
