@@ -34,6 +34,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException();
     }
 
-    return user; // ← THIS becomes req.user
+    const { passwordHash, ...safeUser } = user;
+    return safeUser; // ← THIS becomes req.user
   }
 }
