@@ -13,4 +13,8 @@ export class RegisterDto {
 
   @IsString()
   lastName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  organizationName: string;
 }

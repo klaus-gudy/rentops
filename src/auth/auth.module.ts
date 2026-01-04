@@ -8,10 +8,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { User } from 'src/users/entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { OrganizationModule } from 'src/organization/organization.module';
 
 @Module({
   imports: [
     UsersModule,
+    OrganizationModule,
     ConfigModule, // needed to inject ConfigService below
     JwtModule.registerAsync({
       imports: [ConfigModule],

@@ -7,6 +7,7 @@ import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { ConfigService } from '@nestjs/config';
+import { OrganizationService } from 'src/organization/organization.service';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +15,8 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService, 
+    private readonly configService: ConfigService,
+    private readonly organizationService: OrganizationService 
   ) {}
 
   async register(dto: RegisterDto) {
@@ -36,7 +38,8 @@ export class AuthService {
     });
 
     await this.userRepo.save(user);
-    console.log('JWT_SECRET:', process.env.JWT_SECRET);
+
+    await this.organizationService.createOrganizationForOwner(user, { name: dto.organizationName });
 
     return this.signToken(user);
   }
