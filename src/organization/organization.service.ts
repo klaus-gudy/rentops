@@ -89,4 +89,25 @@ export class OrganizationService {
       message: 'Tenant invited successfully',
     };
   }
+
+  async activateInvitation(email: string, user: User) {
+    const invitation = await this.memberRepo.findOne({
+      where: {
+        invitedEmail: email,
+        isActive: false,
+      },
+    });
+
+    if (!invitation) {
+      throw new BadRequestException('Invalid or expired invitation');
+    }
+
+    invitation.userId = user.id;
+    // invitation.invitedEmail = null;
+    invitation.isActive = true;
+
+    await this.memberRepo.save(invitation);
+
+    return invitation;
+  }
 }

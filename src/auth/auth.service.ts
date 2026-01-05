@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { ConfigService } from '@nestjs/config';
 import { OrganizationService } from 'src/organization/organization.service';
+import { AcceptInvitationDto } from 'src/organization/dto/accept-invitation.dto';
 
 @Injectable()
 export class AuthService {
@@ -58,6 +59,36 @@ export class AuthService {
     if (!valid) {
       throw new UnauthorizedException();
     }
+
+    return this.signToken(user);
+  }
+
+  async acceptInvitation(dto: AcceptInvitationDto) {
+    const existingUser = await this.userRepo.findOne({
+      where: { email: dto.email },
+    });
+
+    if (existingUser) {
+      throw new BadRequestException(
+        'User already exists. Please login instead.',
+      );
+    }
+
+    const passwordHash = await bcrypt.hash(dto.password, 10);
+
+    const user = this.userRepo.create({
+      email: dto.email,
+      passwordHash,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+    });
+
+    await this.userRepo.save(user);
+
+    await this.organizationService.activateInvitation(
+      dto.email,
+      user,
+    );
 
     return this.signToken(user);
   }
