@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Organization } from './entities/organization.entity';
 import { Repository } from 'typeorm';
@@ -73,17 +73,18 @@ export class OrganizationService {
     });
 
     if (existingInvite) {
-      throw new BadRequestException('User already invited');
+      throw new ConflictException('User already invited or exists');
     }
 
-    const invitation = this.memberRepo.create({
+    const member = this.memberRepo.create({
       organizationId: orgId,
       invitedEmail: dto.email,
       role: UserRole.TENANT,
       isActive: false,
     });
 
-    await this.memberRepo.save(invitation);
+    await this.memberRepo.save(member);
+    // TODO: send email with invite token
 
     return {
       message: 'Tenant invited successfully',
