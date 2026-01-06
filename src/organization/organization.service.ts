@@ -7,6 +7,7 @@ import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UserRole } from 'src/common/enums/user-role.enum';
 import { User } from 'src/users/entities/user.entity';
 import { InviteMemberDto } from './dto/invite-member.dto';
+import { ChangeMemberRoleDto } from './dto/change-member-role.dto';
 
 @Injectable()
 export class OrganizationService {
@@ -151,4 +152,49 @@ export class OrganizationService {
       message: 'Member removed from organization',
     };
   }
+
+  async changeMemberRole(
+  organizationId: string,
+  requesterId: string,
+  memberId: string,
+  dto: ChangeMemberRoleDto,
+) {
+  if (dto.role === UserRole.LANDLORD_OWNER) {
+    throw new BadRequestException(
+      'Cannot assign LANDLORD_OWNER role',
+    );
+  }
+
+  const member = await this.memberRepo.findOne({
+    where: {
+      id: memberId,
+      organizationId,
+      isActive: true,
+    },
+  });
+
+  if (!member) {
+    throw new NotFoundException('Member not found');
+  }
+
+  if (member.userId === requesterId) {
+    throw new BadRequestException(
+      'You cannot change your own role',
+    );
+  }
+
+  if (member.role === UserRole.LANDLORD_OWNER) {
+    throw new BadRequestException(
+      'Owner role cannot be changed',
+    );
+  }
+
+  member.role = dto.role;
+  await this.memberRepo.save(member);
+
+  return {
+    message: 'Member role updated successfully',
+    updatedTo: member.role,
+  };
+}
 }
