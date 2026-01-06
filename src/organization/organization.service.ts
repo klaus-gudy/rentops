@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Organization } from './entities/organization.entity';
 import { Repository } from 'typeorm';
@@ -118,5 +118,37 @@ export class OrganizationService {
       relations: ['user'],
       order: { createdAt: 'ASC' },
     });
+  }
+
+  async softRemoveMember(
+    organizationId: string,
+    memberId: string,
+  ) {
+    const member = await this.memberRepo.findOne({
+      where: {
+        id: memberId,
+        organizationId,
+        isActive: true,
+      },
+    });
+
+    if (!member) {
+      throw new NotFoundException(
+        'Organization member not found',
+      );
+    }
+
+    if (member.role === UserRole.LANDLORD_OWNER) {
+      throw new BadRequestException(
+        'Owner cannot be removed from organization',
+      );
+    }
+
+    member.isActive = false;
+    await this.memberRepo.save(member);
+
+    return {
+      message: 'Member removed from organization',
+    };
   }
 }
