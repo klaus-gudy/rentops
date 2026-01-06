@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { PropertiesModule } from './properties/properties.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { PropertyModule } from './property/property.module';
 config();
 
 @Module({
@@ -32,6 +33,7 @@ config();
       secret: process.env.JWT_SECRET, // ← MUST NOT BE UNDEFINED
       signOptions: { expiresIn: '1d' },
     }),
+    PropertyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
