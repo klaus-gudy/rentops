@@ -13,11 +13,14 @@ import { UserRole } from 'src/common/enums/user-role.enum';
 export class OrganizationController {
     constructor(private readonly organizationService: OrganizationService) { }
 
-    @Get()
-    async listOrganizations() {
-        return {
-            message: 'Organization endpoints will be added here',
-        };
+    @Get('members')
+    @Roles(UserRole.LANDLORD_OWNER, UserRole.PROPERTY_MANAGER)
+    async listMembers(
+        @Req() req: Request & { organizationId: string },
+    ) {
+        return this.organizationService.listOrganizationMembers(
+            req.organizationId,
+        );
     }
 
     @Post('/invite')

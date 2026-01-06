@@ -111,4 +111,12 @@ export class OrganizationService {
 
     return invitation;
   }
+
+  async listOrganizationMembers(organizationId: string) {
+    return this.memberRepo.find({
+      where: { organizationId },
+      relations: ['user'],
+      order: { createdAt: 'ASC' },
+    });
+  }
 }
