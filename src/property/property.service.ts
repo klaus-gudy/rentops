@@ -37,4 +37,10 @@ export class PropertyService {
 
     return property;
   }
+
+  async softDelete(orgId: string, id: string) {
+    const property = await this.findOne(orgId, id);
+    property.isDeleted = true;
+    return this.propertyRepo.save(property);
+  }
 }
