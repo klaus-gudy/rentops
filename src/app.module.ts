@@ -6,7 +6,6 @@ import { config } from 'dotenv';
 import { ConfigModule } from '@nestjs/config';
 import { OrganizationModule } from './organization/organization.module';
 import { UsersModule } from './users/users.module';
-import { PropertiesModule } from './properties/properties.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PropertyModule } from './property/property.module';
@@ -27,7 +26,6 @@ config();
     ConfigModule.forRoot({ isGlobal: true }),
     OrganizationModule,
     UsersModule,
-    PropertiesModule,
     AuthModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET, // ← MUST NOT BE UNDEFINED
