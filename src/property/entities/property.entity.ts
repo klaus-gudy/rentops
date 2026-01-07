@@ -1,5 +1,5 @@
 import { User } from "src/users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('properties')
 export class Property {
@@ -18,7 +18,11 @@ export class Property {
   @Column({ nullable: true })
   address: string;
 
+  @Column({ nullable: true })
+  assignedManagerId?: string;
+
   @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'assignedManagerId' })
   assignedManager?: User;
 
   @Column({ default: false })
