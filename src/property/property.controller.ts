@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { PropertyService } from './property.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth-guard';
@@ -30,5 +30,16 @@ export class PropertyController {
         @Req() req: Request & { organizationId: string },
     ) {
         return this.propertyService.findAll(req.organizationId);
+    }
+
+    @Get(':id')
+    async getProperty(
+        @Param('id') id: string,
+        @Req() req: Request & { organizationId: string },
+    ) {
+        return this.propertyService.findOne(
+            req.organizationId,
+            id,
+        );
     }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Property } from './entities/property.entity';
@@ -24,5 +24,17 @@ export class PropertyService {
     return this.propertyRepo.find({
       where: { organizationId: orgId, isDeleted: false },
     });
+  }
+
+  async findOne(orgId: string, id: string) {
+    const property = await this.propertyRepo.findOne({
+      where: { id, organizationId: orgId, isDeleted: false },
+    });
+
+    if (!property) {
+      throw new NotFoundException('Property not found');
+    }
+
+    return property;
   }
 }
