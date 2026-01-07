@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { PropertyService } from './property.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth-guard';
@@ -23,5 +23,12 @@ export class PropertyController {
             req.organizationId,
             dto,
         );
+    }
+
+    @Get()
+    async listProperties(
+        @Req() req: Request & { organizationId: string },
+    ) {
+        return this.propertyService.findAll(req.organizationId);
     }
 }
