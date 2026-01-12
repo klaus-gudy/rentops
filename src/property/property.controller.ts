@@ -45,6 +45,7 @@ export class PropertyController {
     }
 
     @Delete(':id')
+    @Roles(UserRole.LANDLORD_OWNER)
     async softDelete(
         @Param('id') id: string,
         @Req() req: Request & { organizationId: string },
