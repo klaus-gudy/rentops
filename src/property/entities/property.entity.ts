@@ -1,5 +1,6 @@
 import { User } from "src/users/entities/user.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Unit } from "src/unit/entities/unit.entity";
 
 @Entity('properties')
 export class Property {
@@ -34,4 +35,5 @@ export class Property {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  units?: Unit[];
 }
