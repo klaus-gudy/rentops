@@ -52,6 +52,9 @@ export class Unit {
   @Column({ nullable: true })
   type?: string; // studio, 1br, etc
 
+  @Column({ default: false })
+  isDeleted: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 

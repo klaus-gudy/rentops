@@ -10,6 +10,7 @@ import { Unit } from './entities/unit.entity';
 import { UnitStatus } from 'src/common/enums/unit-status.enum';
 import { CreateUnitDto } from './dto/create-unit.dto';
 import { Property } from 'src/property/entities/property.entity';
+import { UpdateUnitDto } from './dto/update-unit.dto';
 
 @Injectable()
 export class UnitService {
@@ -61,6 +62,23 @@ export class UnitService {
       status: UnitStatus.VACANT,
     });
 
+    return this.unitRepo.save(unit);
+  }
+
+  async updateUnit(
+    orgId: string,
+    unitId: string,
+    dto: UpdateUnitDto,
+  ) {
+    const unit = await this.unitRepo.findOne({
+      where: { id: unitId, organizationId: orgId },
+    });
+
+    if (!unit) {
+      throw new NotFoundException('Unit not found');
+    }
+
+    Object.assign(unit, dto);
     return this.unitRepo.save(unit);
   }
 }
