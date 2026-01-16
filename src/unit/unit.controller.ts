@@ -6,6 +6,7 @@ import {
   Req,
   UseGuards,
   Patch,
+  Delete,
 } from '@nestjs/common';
 import { UnitService } from './unit.service';
 import { UserRole } from 'src/common/enums/user-role.enum';
@@ -45,6 +46,17 @@ export class UnitController {
       req.user.organizationId,
       unitId,
       dto,
+    );
+  }
+
+  @Delete(':unitId')
+  deleteUnit(
+    @Req() req,
+    @Param('unitId') unitId: string,
+  ) {
+    return this.unitService.deleteUnit(
+      req.user.organizationId,
+      unitId,
     );
   }
 }

@@ -81,4 +81,19 @@ export class UnitService {
     Object.assign(unit, dto);
     return this.unitRepo.save(unit);
   }
+
+  async deleteUnit(orgId: string, unitId: string) {
+    const unit = await this.unitRepo.findOne({
+      where: { id: unitId, organizationId: orgId },
+    });
+
+    if (!unit) {
+      throw new NotFoundException('Unit not found');
+    }
+
+    await this.unitRepo.softDelete(unit.id);
+    return { message: 'Unit deleted successfully' };
+  }
+
+  
 }
