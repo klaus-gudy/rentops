@@ -7,6 +7,7 @@ import {
   UseGuards,
   Patch,
   Delete,
+  Get,
 } from '@nestjs/common';
 import { UnitService } from './unit.service';
 import { UserRole } from 'src/common/enums/user-role.enum';
@@ -33,6 +34,17 @@ export class UnitController {
       req.organizationId,
       propertyId,
       dto,
+    );
+  }
+
+  @Get()
+  listUnits(
+    @Req() req,
+    @Param('propertyId') propertyId: string,
+  ) {
+    return this.unitService.listUnitsByProperty(
+      req.user.organizationId,
+      propertyId,
     );
   }
 

@@ -65,6 +65,24 @@ export class UnitService {
     return this.unitRepo.save(unit);
   }
 
+  async listUnitsByProperty(orgId: string, propertyId: string) {
+    // Validate property belongs to org
+    const property = await this.propertyRepo.findOne({
+      where: { id: propertyId, organizationId: orgId },
+    });
+
+    if (!property) {
+      throw new NotFoundException('Property not found');
+    }
+
+    return this.unitRepo.find({
+      where: {
+        propertyId,
+        organizationId: orgId,
+      },
+    });
+  }
+
   async updateUnit(
     orgId: string,
     unitId: string,
