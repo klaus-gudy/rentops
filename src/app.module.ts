@@ -11,6 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PropertyModule } from './property/property.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { UnitModule } from './unit/unit.module';
+import { LeaseModule } from './lease/lease.module';
 config();
 
 @Module({
@@ -35,6 +36,7 @@ config();
     }),
     PropertyModule,
     UnitModule,
+    LeaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
