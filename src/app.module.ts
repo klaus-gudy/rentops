@@ -25,6 +25,8 @@ config();
       database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true, // Set to false in production
+      // migrationsRun: true,
+      // migrations: [__dirname + '/migrations/*{.ts,.js}'],
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     OrganizationModule,
