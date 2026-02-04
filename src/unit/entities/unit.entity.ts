@@ -7,10 +7,12 @@ import {
   UpdateDateColumn,
   Index,
   Unique,
+  OneToMany,
 } from 'typeorm';
 
 import { UnitStatus } from 'src/common/enums/unit-status.enum';
 import { Property } from 'src/property/entities/property.entity';
+import { Lease } from 'src/lease/entities/lease.entity';
 
 @Entity('units')
 @Unique(['propertyId', 'unitNumber'])
@@ -29,6 +31,9 @@ export class Unit {
     onDelete: 'CASCADE',
   })
   property: Property;
+
+  @OneToMany(() => Lease, (lease) => lease.unit)
+leases: Lease[];
 
   @Column()
   unitNumber: string;

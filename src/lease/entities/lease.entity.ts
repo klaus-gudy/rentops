@@ -1,5 +1,7 @@
 import { LeaseStatus } from "src/common/enums/lease-statu.enum";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { OrganizationMember } from "src/organization/entities/organization-member.entity";
+import { Unit } from "src/unit/entities/unit.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('leases')
 export class Lease {
@@ -12,11 +14,29 @@ export class Lease {
   @Column()
   organizationId: string;
 
+  /* -------------------- UNIT -------------------- */
+
   @Column()
   unitId: string;
 
+  @ManyToOne(() => Unit, {
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'unitId' })
+  unit: Unit;
+
+  /* -------------------- TENANT -------------------- */
+
   @Column()
   tenantId: string;
+
+  @ManyToOne(() => OrganizationMember, {
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'tenantId' })
+  tenant: OrganizationMember;
+
+  /* -------------------- DATES -------------------- */
 
   @Column({ type: 'date' })
   startDate: Date;
