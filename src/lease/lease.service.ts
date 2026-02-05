@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Lease } from './entities/lease.entity';
@@ -113,6 +113,77 @@ export class LeaseService {
         await this.unitRepo.update(lease.unitId, { status: UnitStatus.VACANT });
 
         return { message: 'Lease terminated' };
+    }
+
+    async getOrganizationLeaseHistory(orgId: string) {
+        return this.leaseRepo.find({
+            where: { organizationId: orgId },
+            relations: {
+                unit: true,
+                tenant: {
+                    user: true,
+                },
+            },
+            order: {
+                createdAt: 'DESC',
+            },
+        });
+    }
+
+    async getUnitLeaseHistory(
+        orgId: string,
+        unitId: string,
+    ) {
+        const leases = await this.leaseRepo.find({
+            where: {
+                organizationId: orgId,
+                unitId,
+            },
+            relations: {
+                tenant: {
+                    user: true,
+                },
+            },
+            order: {
+                startDate: 'DESC',
+            },
+        });
+
+        if (!leases.length) {
+            throw new NotFoundException(
+                'No lease history found for this unit',
+            );
+        }
+
+        return leases;
+    }
+
+    async getTenantLeaseHistory(
+        organizationId: string,
+        tenantId: string,
+    ) {
+        const leases = await this.leaseRepo.find({
+            where: {
+                organizationId,
+                tenantId,
+            },
+            relations: {
+                unit: {
+                    property: true,
+                },
+            },
+            order: {
+                startDate: 'DESC',
+            },
+        });
+
+        if (!leases.length) {
+            throw new NotFoundException(
+                'No lease history found for this tenant',
+            );
+        }
+
+        return leases;
     }
 
 
