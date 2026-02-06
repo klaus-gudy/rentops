@@ -12,6 +12,7 @@ import { PropertyModule } from './property/property.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { UnitModule } from './unit/unit.module';
 import { LeaseModule } from './lease/lease.module';
+import { InvoicesModule } from './invoices/invoices.module';
 config();
 
 @Module({
@@ -39,6 +40,7 @@ config();
     PropertyModule,
     UnitModule,
     LeaseModule,
+    InvoicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
