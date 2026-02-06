@@ -12,13 +12,13 @@ export class InvoicesController {
   constructor(private readonly invoicesService: InvoicesService) {}
 
   @Post()
-  create(@Req() req: Request & { organizationId: string },@Body() createInvoiceDto: CreateInvoiceDto) {
+  async create(@Req() req: Request & { organizationId: string },@Body() createInvoiceDto: CreateInvoiceDto) {
     return this.invoicesService.create(req.organizationId, createInvoiceDto);
   }
 
   @Get()
-  findAll() {
-    return this.invoicesService.findAll();
+  async findAll(@Req() req: Request & { organizationId: string }) {
+    return this.invoicesService.findAll(req.organizationId);
   }
 
   @Get(':id')

@@ -26,8 +26,12 @@ export class InvoicesService {
     return await this.invoiceRepo.save(invoice);
   }
 
-  findAll() {
-    return `This action returns all invoices`;
+  async findAll(orgId: string) {
+    return this.invoiceRepo.find({
+      where: { organizationId: orgId },
+      relations: ['lease', 'unit', 'tenant'],
+      order: { createdAt: 'DESC' },
+    });
   }
 
   findOne(id: number) {
